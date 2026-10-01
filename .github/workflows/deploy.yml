@@ -1,0 +1,54 @@
+name: Deploy RetailEdge App
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run basic syntax check
+        run: php -l index.php
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::ACCOUNT_ID:role/github-actions-role
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t retailedge-app .
+          docker tag retailedge-app:latest ${{ steps.login-ecr.outputs.registry }}/retailedge-app:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/retailedge-app:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Deploy to Auto Scaling Group via Instance Refresh
+        run: |
+          echo "Triggering instance refresh with the new image..."
+          # aws autoscaling start-instance-refresh --auto-scaling-group-name retailedge-asg
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          echo "Deployment failed — rolling back to previous instance refresh..."
+          # aws autoscaling cancel-instance-refresh --auto-scaling-group-name retailedge-asg
