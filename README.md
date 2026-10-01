@@ -44,3 +44,14 @@ storage and 7-day backups, plus an ElastiCache Redis cluster
 achieving near-zero RPO and under 2-minute RTO.
 
 Full details: [layer-4-data/console-steps.md](./layer-4-data/console-steps.md) | [Migration Plan](./layer-4-data/migration_plan.md)
+
+## Layer 5 — CI/CD Pipeline & Go-Live
+
+Containerized the application with Docker and built a GitHub
+Actions pipeline (test → build → deploy) using OIDC authentication,
+manual approval, and automatic rollback. Created CloudWatch alarms
+for latency, error rate, database CPU, and cache hit rate, with SNS
+notifications. Wrote a Go-Live checklist and a safe DNS cutover plan
+using Route 53 weighted routing.
+
+Full details: [layer-5-cicd/console-steps.md](./layer-5-cicd/console-steps.md)
