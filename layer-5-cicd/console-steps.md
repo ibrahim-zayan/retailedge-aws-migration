@@ -60,4 +60,21 @@ everyone at once.
 
 ## Task 5.4 (Bonus) — Cost Optimization Report
 
-[هنضيفها بعد ما نخلص Task 5.4]
+**Savings Plans / Reserved Instances for RDS**
+Since the RDS instance runs continuously (unlike the ASG, which
+scales up and down), it's a strong candidate for a 1-year or 3-year
+Reserved Instance, which can reduce the On-Demand cost by roughly
+40-60%.
+
+**S3 Intelligent-Tiering for static assets**
+Instead of storing all product images at the same storage cost
+indefinitely, Intelligent-Tiering automatically moves infrequently
+accessed files (like old product images) to a cheaper storage tier,
+and moves them back automatically if requested again — with no
+manual management needed.
+
+**AWS Compute Optimizer recommendations**
+A free service that monitors actual EC2/ASG usage over time and
+flags over-provisioned instances (e.g. if a t3.medium is only using
+20% of its capacity, it may recommend downsizing to a t3.small
+without affecting performance).
