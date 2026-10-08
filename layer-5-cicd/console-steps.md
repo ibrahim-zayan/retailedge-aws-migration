@@ -78,3 +78,6 @@ A free service that monitors actual EC2/ASG usage over time and
 flags over-provisioned instances (e.g. if a t3.medium is only using
 20% of its capacity, it may recommend downsizing to a t3.small
 without affecting performance).
+
+Note: the workflow is triggered manually (`workflow_dispatch`) because
+this practice repo has no application code yet, so push-triggered runs would fail.

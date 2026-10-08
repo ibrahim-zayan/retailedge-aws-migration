@@ -62,14 +62,17 @@ Route 53 weighted routing.
 
 ### CloudWatch Alarms
 
-The Task defines 4 alarms. Created in the Console vs. designed only:
+Alarms created in the Console vs. designed only:
 
 | Alarm | Metric | Threshold | Status |
 |-------|--------|-----------|--------|
-| High Latency | ALB P95 Latency | > 800ms for 5 min | Created |
+| Unhealthy Hosts | ALB UnHealthyHostCount | > 0 | Created |
+| High Latency | ALB TargetResponseTime | > 0.8s | Created |
 | DB CPU Spike | RDS CPUUtilization | > 80% | Created |
-| High Error Rate | ALB 5xx Rate | > 1% | Designed (not deployed) |
-| Low Cache Hit Rate | ElastiCache Hit Rate | < 70% | Designed (not deployed) |
+| High Error Rate | ALB 5xx rate | > 1% | Designed (no 5xx data points yet) |
+| Low Cache Hit Rate | ElastiCache hit rate (Metric Math: CacheHits / (CacheHits + CacheMisses)) | < 70% | Designed (needs Metric Math) |
+
+All alarms notify via a shared SNS topic.
 
 Full details: [layer-5-cicd/console-steps.md](./layer-5-cicd/console-steps.md)
 
@@ -80,8 +83,7 @@ Full details: [layer-5-cicd/console-steps.md](./layer-5-cicd/console-steps.md)
 Terraform code lives in [`Terraform/`](./Terraform) (region `eu-west-1`).
 Only `terraform validate` and `terraform plan` were run
 (**no full `apply`**; apply was only tried once on VPC + subnet to test).
-The code is organised as modules instead of the flat files in the
-Task's starter structure.
+
 
 ```
 Terraform/
@@ -95,14 +97,11 @@ Terraform/
 Latest result: `Plan: 39 to add, 0 to change, 0 to destroy.`
 
 Notes:
-- `alb_sg` allows inbound 80 and 443. The Task asks for 443 only; port 80
-  is an optional addition because the ALB listener is HTTP (no ACM
+- `alb_sg` allows inbound 80 and 443 (the ALB listener is HTTP; no ACM
   certificate in this practice setup).
-- The database security group is named `db_sg` in the code (`rds_sg` in
-  the Task).
 - Compute includes Target Tracking (60% CPU) and a scheduled action
-  (desired capacity = 6 every Friday 20:00 UTC) as the Task 3.4 bonus.
-- ElastiCache Multi-AZ (`multi_az_enabled` + `automatic_failover_enabled`)
-  is an optional addition; the Task only requires 2 nodes + encryption.
+  (desired capacity = 6 every Friday 20:00 UTC).
+- ElastiCache runs with Multi-AZ and automatic failover enabled
+  (`multi_az_enabled` + `automatic_failover_enabled`).
 - RDS master password is managed by AWS Secrets Manager
   (`manage_master_user_password = true`), so no password is stored in code.
