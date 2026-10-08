@@ -174,3 +174,12 @@ resource "aws_autoscaling_policy" "cpu_target_tracking" {
     target_value = 60.0
   }
 }
+resource "aws_autoscaling_schedule" "friday_peak" {
+  scheduled_action_name  = "friday-peak-scale-up"
+  autoscaling_group_name = aws_autoscaling_group.app.name
+  min_size               = 2
+  max_size               = 10
+  desired_capacity       = 6
+  recurrence             = "0 20 * * 5"
+  time_zone              = "UTC"
+}

@@ -33,4 +33,12 @@ variable "alb_port" {
   type        = number
   default     = 80
 }
+variable "db_instance_class" {
+  type    = string
+  default = "db.t3.medium"
+}
 
+variable "db_allocated_storage" {
+  type    = number
+  default = 100
+}

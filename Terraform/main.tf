@@ -15,11 +15,11 @@ data "aws_ami" "amazon_linux" {
 }
 
 module "network" {
-  source = "./modules/network"
+  source = "./modules/Network"
 }
 
 module "compute" {
-  source = "./modules/compute"
+  source = "./modules/Compute"
 
   instance_type    = var.instance_type
   desired_capacity = var.desired_capacity
@@ -34,4 +34,12 @@ module "compute" {
   app_subnet_ids        = module.network.app_subnet_ids
   alb_security_group_id = module.network.alb_security_group_id
   app_security_group_id = module.network.app_security_group_id
+}
+module "data" {
+  source = "./modules/Data"
+
+  db_subnet_ids        = module.network.db_subnet_ids
+  db_security_group_id = module.network.db_security_group_id
+  db_instance_class    = var.db_instance_class
+  db_allocated_storage = var.db_allocated_storage
 }
