@@ -7,8 +7,7 @@ from 3 bare-metal servers to a Multi-AZ, Three-Tier AWS architecture.
 > The Console walkthrough was done in **us-east-1**; the Terraform code was
 > tested (`validate` + `plan`) in **eu-west-1**.
 
-![Architecture Diagram](./layer-1-design/architecture.png)
-
+![Architecture Diagram](./layer-1-design/architecture-diagram.png)
 ## Layer 1 — Architecture Design
 
 Designed a Multi-AZ, three-tier AWS architecture and evaluated
