@@ -23,8 +23,7 @@ Full details: [layer-1-design/console-steps.md](./layer-1-design/console-steps.m
 
 Built a VPC (10.0.0.0/16) with 6 subnets across 2 Availability Zones,
 an Internet Gateway, 2 NAT Gateways, and 4 route tables enforcing
-strict tier isolation (public, private, database). Created 3
-chained security groups (alb-sg → app-sg → rds-sg) so each tier only
+strict tier isolation (public, private, database). Created 4 security groups (alb-sg → app-sg → rds-sg / cache-sg) so each tier only
 accepts traffic from the tier directly in front of it.
 
 Full details: [layer-2-network/console-steps.md](./layer-2-network/console-steps.md)
