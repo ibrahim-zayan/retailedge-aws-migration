@@ -41,3 +41,11 @@ are stateful — an allowed inbound request automatically allows its
 response outbound. NACLs attach to subnets, are stateless (inbound and
 outbound rules must both be defined separately), and support explicit
 deny rules in addition to allow rules.
+## Design Correction — Dedicated Security Group for ElastiCache
+
+The ElastiCache cluster was originally attached to `rds-sg`, which
+only allows port 3306 (MySQL). Redis listens on port 6379, so the
+application tier could not have reached the cache. A dedicated
+`cache-sg` was created that allows port 6379 from `app-sg` only,
+following least privilege (each resource opens only its own port).
+
