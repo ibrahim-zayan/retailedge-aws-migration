@@ -59,3 +59,9 @@ directly from the cache, which is much faster and reduces load on RDS.
 As the cache hit rate increases, load on RDS decreases and response
 times improve for users.
 
+## Design Correction — Dedicated Security Group for ElastiCache
+
+The ElastiCache cluster was originally attached to `rds-sg` (port 3306),
+but Redis listens on port 6379. The corrected design uses a dedicated
+`cache-sg` that allows port 6379 from `app-sg` only.
+Details: [layer-2-network/console-steps.md](../layer-2-network/console-steps.md)
