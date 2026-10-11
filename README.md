@@ -139,6 +139,9 @@ below were found during a self-review and are documented on purpose.
 - The Docker image is not what the Auto Scaling Group runs: instances are
   configured through the Launch Template user data. The pipeline and the
   compute layer are designed but not wired together.
+  - The Dockerfile copies the whole repo (`COPY .`) and there is no
+  `.dockerignore`. In a real setup the application code would live in its
+  own `app/` folder and be the only thing copied into the image.
 - The deploy and rollback commands are commented out.
 
 **Design / Documentation**
