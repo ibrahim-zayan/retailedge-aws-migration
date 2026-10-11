@@ -22,7 +22,7 @@ Created 4 security groups forming a chained access pattern:
 | cache-sg | app-sg | 6379 |
 
 ![Security Groups](./security-groups.png)
-
+*Screenshot predates the `cache-sg` addition; see "Design Correction" below.*
 ## Task 2.3 — Answers
 
 **Why does the Database subnet have no route to the Internet Gateway?**
