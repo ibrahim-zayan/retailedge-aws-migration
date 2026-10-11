@@ -13,13 +13,13 @@ an Internet Gateway, 2 NAT Gateways (one per AZ), and 4 route tables
 
 ## Task 2.2 — Security Groups
 
-Created 3 security groups forming a chained access pattern:
-
+Created 4 security groups forming a chained access pattern:
 | Security Group | Allowed Source | Port |
 |---|---|---|
-| alb-sg | 0.0.0.0/0 (internet) | 443 |
+| alb-sg | 0.0.0.0/0 (internet) | 80, 443 |
 | app-sg | alb-sg | 8080 |
 | rds-sg | app-sg | 3306 |
+| cache-sg | app-sg | 6379 |
 
 ![Security Groups](./security-groups.png)
 
