@@ -104,3 +104,49 @@ Notes:
   (`multi_az_enabled` + `automatic_failover_enabled`).
 - RDS master password is managed by AWS Secrets Manager
   (`manage_master_user_password = true`), so no password is stored in code.
+## Known Limitations
+
+This is a hands-on practice project, not a production deployment. The gaps
+below were found during a self-review and are documented on purpose.
+
+**Infrastructure as Code**
+- The ElastiCache replication group in Terraform is not attached to a
+  dedicated `cache-sg` (port 6379 from `app-sg`). This was fixed only in the
+  Console (see layer-2 "Design Correction"). If the Terraform code were
+  applied as-is, the cache would use the VPC default security group and the
+  application tier could not reach it.
+- Terraform state is local (no S3 backend / state locking). A real
+  environment would use a remote backend.
+- `skip_final_snapshot = true` and no `deletion_protection` on RDS, because
+  the stack was torn down between sessions to control cost.
+- No IAM instance profile for the EC2 instances (no Secrets Manager read
+  access for the RDS password, no SSM Session Manager). Out of scope.
+- Ports are partly hard-coded in the Network module (8080 / 80 / 443)
+  instead of using the `app_port` / `alb_port` variables.
+- `terraform apply` was never run on the full stack; only `validate` and
+  `plan` (39 resources).
+
+**Security**
+- The ALB listens on HTTP only (no domain / ACM certificate in this
+  practice setup). Port 443 is open in `alb-sg` but unused.
+- ElastiCache has encryption in transit but no AUTH token / user group, and
+  no snapshot retention.
+
+**CI/CD**
+- The GitHub Actions workflow is manual (`workflow_dispatch`). The OIDC role
+  is a placeholder, and there is no application code (`index.php`), so the
+  `test` job would fail if run.
+- The Docker image is not what the Auto Scaling Group runs: instances are
+  configured through the Launch Template user data. The pipeline and the
+  compute layer are designed but not wired together.
+- The deploy and rollback commands are commented out.
+
+**Design / Documentation**
+- The TCO (~74% saving) is an infrastructure-only estimate based on larger
+  instance sizes than the t3.micro used in the lab; it excludes data
+  transfer, NAT data processing, DMS, and monitoring costs.
+- The migration plan is a high-level cutover design. It does not cover DMS
+  prerequisites (binlog settings, connectivity from on-premises), data
+  validation, or reverse replication for rollback.
+- Route 53, CloudFront, and S3 appear in the architecture diagram as part
+  of the target design but were not built.
